@@ -103,15 +103,16 @@ def main():
 		name = state.rsplit('/')[-1] + '.csv'
 		sbar.update(1)
 		#Add the header row
-		with open(name,'w') as csvFile:
+		with open(name,'a+') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerow(header)
 
 		csvFile.close()
 		#print(header)
+		ubar = tqdm(total=len(dateurl))
 		for sdateurl in dateurl:
 			date = sdateurl.rsplit('/')[-1]
-
+			ubar.update(1)
 			data = getData(sdateurl)
 			year_data = list()
 			year_data.append(date.rsplit('-')[-1])
@@ -122,7 +123,7 @@ def main():
 				year_data.append(data[key])
 
 			#print(year_data)
-			with open(name, 'a') as csvFile:
+			with open(name, 'a+') as csvFile:
 				writer = csv.writer(csvFile)
 				writer.writerow(year_data)
 

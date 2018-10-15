@@ -94,7 +94,7 @@ def main():
 		name = state.rsplit('/')[-1] + '.csv'
 
 		#Add the header row
-		with open(name,'w') as csvFile:
+		with open(name,'a+') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerow(header)
 
@@ -113,7 +113,7 @@ def main():
 				year_data.append(data[key])
 
 			#print(year_data)
-			with open(name, 'a') as csvFile:
+			with open(name, 'a+') as csvFile:
 				writer = csv.writer(csvFile)
 				writer.writerow(year_data)
 

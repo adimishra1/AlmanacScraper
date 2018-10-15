@@ -106,7 +106,7 @@ def main():
 
 		sbar.update(1)
 		#Add the header row
-		with open(name,'w') as csvFile:
+		with open(name,'a+') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerow(header)
 
@@ -127,7 +127,7 @@ def main():
 
 			#print(year_data)
 
-			with open(name, 'a') as csvFile:
+			with open(name, 'a+') as csvFile:
 				writer = csv.writer(csvFile)
 				writer.writerow(year_data)
 

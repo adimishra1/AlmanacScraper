@@ -12,3 +12,7 @@ Scraper that scrapes weather data from almanac.com
 * After use, deactivate the virtualenv using `deactivate`.
 
 All list of data will be created, containing csv files of each states. By default, the starting and ending dates are 1st January 1998, and 2nd January 1998.
+
+## Note 
+For Parallel Processing, please use `sidpr.py`, `tapaaspr.py` and `biswapr.py`. Please set the value of PROCS, to reasonable number as you consider the value according to specs of computer.
+

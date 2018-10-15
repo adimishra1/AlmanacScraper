@@ -2,7 +2,9 @@ import requests
 import re
 import datetime
 import csv
+import os
 
+from tqdm import tqdm
 from bs4 import BeautifulSoup as BS 
 
 def getData(url):
@@ -40,8 +42,8 @@ def getallUrl(url):
 	Returns the list of all urls for a given city, and between 2018(1 Jan) and 1998(1 Jan)
 	'''
 
-	starttime = datetime.date(1998,1,1)
-	endtime = datetime.date(1998,1,2)
+	starttime = datetime.date(2008,1,1)
+	endtime = datetime.date(2018,7,1)
 
 	
 	
@@ -80,7 +82,14 @@ def main():
 		state_url = 'https://www.almanac.com' + tag['href']
 		state_list.append(state_url)
 
+	start = end = None
+	for num,i in enumerate(state_list):
+		if(i.rsplit('/')[-1] == 'Ellicott+City'):
+			end = num 
+		
 
+	state_list = state_list[0:end]
+	sbar = tqdm(total=len(state_list))
 	# For a given state, calculate the list of urls possible
 	# for different dates, and then scrape the data and export
 	# the data into csv for a given state
@@ -89,35 +98,71 @@ def main():
 
 		dateurl = getallUrl(state)
 
-		header = ['Year', 'Month', 'Day', 'Maximum Temperature', 'Minimum Temperature', 'Mean Sea Level Pressure', 'Total Precipitation', 'Mean Dew Point','Mean Wind Speed', 'Maximum Sustained Wind Speed','Maximum Wind Gust','Visibility']
-		header1 = header[3:]
+		header = ['Date','Year', 'Month', 'Day', 'Maximum Temperature', 'Minimum Temperature', 'Mean Sea Level Pressure', 'Total Precipitation', 'Mean Dew Point','Mean Wind Speed', 'Maximum Sustained Wind Speed','Maximum Wind Gust','Visibility']
+		header1 = header[4:]
 		name = state.rsplit('/')[-1] + '.csv'
-
+		sbar.update(1)
 		#Add the header row
-		with open(name,'a+') as csvFile:
-			writer = csv.writer(csvFile)
-			writer.writerow(header)
-
-		csvFile.close()
-		#print(header)
-		for sdateurl in dateurl:
-			date = sdateurl.rsplit('/')[-1]
-
-			data = getData(sdateurl)
-			year_data = list()
-			year_data.append(date.rsplit('-')[-1])
-			year_data.append(date.rsplit('-')[-2])
-			year_data.append(date.rsplit('-')[-3])
-
-			for key in header1:
-				year_data.append(data[key])
-
-			#print(year_data)
-			with open(name, 'a+') as csvFile:
+		if not os.path.isfile(name):
+			with open(name,'a+') as csvFile:
 				writer = csv.writer(csvFile)
-				writer.writerow(year_data)
+				writer.writerow(header)
 
 			csvFile.close()
+		#print(header)
+		ubar = tqdm(total=len(dateurl))
+		for sdateurl in dateurl:
+			date = sdateurl.rsplit('/')[-1]
+			curr_date = datetime.datetime.strptime(date,'%Y-%m-%d')
+			#print(" Date {} Type {}".format(curr_date, type(curr_date)))
+			last_date = list()
+			with open(name, 'r') as csvFile:
+				csv_reader = csv.reader(csvFile, delimiter=',')
+				
+				for row in reversed(list(csv_reader)):
+					last_date.append(row)
+					
+					break
+			last_date = last_date[0][0]
+			flag=0
+			try:
+				last_date = datetime.datetime.strptime(last_date,'%Y-%m-%d %H:%M:%S')
+			except TypeError:
+				flag=1
+				last_date = curr_date
+				
+			except ValueError:
+				flag=1
+				last_date = curr_date
+				
+
+
+			if last_date > curr_date :
+				pass
+			elif last_date <= curr_date:
+				if last_date < curr_date or flag==1:
+					flag=0
+					ubar.update(1)
+					data = getData(sdateurl)
+					year_data = list()
+					year_data.append(curr_date)
+					year_data.append(date.rsplit('-')[0])
+					year_data.append(date.rsplit('-')[1])
+					year_data.append(date.rsplit('-')[2])
+
+					for key in header1:
+						year_data.append(data[key])
+
+					#print(year_data)
+					with open(name, 'a+') as csvFile:
+						writer = csv.writer(csvFile)
+						writer.writerow(year_data)
+
+					csvFile.close()
+				else:
+					pass
+		
+			
 
 
 				

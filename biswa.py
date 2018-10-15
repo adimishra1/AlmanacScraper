@@ -42,7 +42,7 @@ def getallUrl(url):
 	'''
 
 	starttime = datetime.date(2008,1,1)
-	endtime = datetime.date(2018,1,1)
+	endtime = datetime.date(2018,7,1)
 
 	
 	

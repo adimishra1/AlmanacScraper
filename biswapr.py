@@ -22,22 +22,27 @@ def getData(url):
 	weather_data = dict()
 	list_weather = soup.find_all('tr', class_=re.compile('weather'))
 
-	for data in list_weather:
+	if list_weather != []:
+		for data in list_weather:
 
-		try:
-			heading = data.find_all('h3')[0].string
-		except IndexError:
-			heading = []
+			try:
+				heading = data.find_all('h3')[0].string
+			except IndexError:
+				heading = []
 
-		if heading != []:
+			if heading != []:
 
-			valu = data.find_all(class_='value')
-			if valu != []:
-			
-				weather_data[data.find_all('h3')[0].string] = valu[0].string
-			else:
-				weather_data[data.find_all('h3')[0].string] = None
-
+				valu = data.find_all(class_='value')
+				if valu != []:
+				
+					weather_data[data.find_all('h3')[0].string] = valu[0].string
+				else:
+					weather_data[data.find_all('h3')[0].string] = None
+	else:
+		header = ['Date','Year', 'Month', 'Day', 'Maximum Temperature', 'Minimum Temperature', 'Mean Sea Level Pressure', 'Total Precipitation', 'Mean Dew Point','Mean Wind Speed', 'Maximum Sustained Wind Speed','Maximum Wind Gust','Visibility']
+		header1 = header[4:]
+		for data in header1:
+			weather_data[data] = None
 	return weather_data
 
 def getallUrl(url):
